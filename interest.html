@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover Interests | Dostiशिप</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a3aff;
+            --secondary-color: #6c63ff;
+            --accent-color: #ff6b6b;
+            --dark-color: #26233d;
+            --light-color: #f8f9fa;
+            --text-color: #333;
+            --text-light: #777;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: white;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--accent-color);
+        }
+        
+        .back-button {
+            background: var(--dark-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        
+        .back-button:hover {
+            background: var(--primary-color);
+            transform: translateX(-5px);
+        }
+        
+        /* Main Content */
+        .interests-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 30px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-title:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+        
+        .page-subtitle {
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Connection Type Selector */
+        .connection-options {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+            background: var(--light-color);
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 500px;
+            margin: 40px auto;
+        }
+        
+        .connection-option {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .connection-option.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .connection-option:not(.active):hover {
+            background: rgba(74, 58, 255, 0.1);
+        }
+        
+        .connection-option i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        /* Interests Grid */
+        .interests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 50px;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        
+        .interests-grid.reveal {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .interest-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .interest-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .interest-card.selected {
+            border-color: var(--primary-color);
+            background: rgba(74, 58, 255, 0.05);
+        }
+        
+        .interest-card.selected:after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 25px;
+            height: 25px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .interest-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(74, 58, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: var(--primary-color);
+            font-size: 24px;
+            transition: var(--transition);
+        }
+        
+        .interest-card.selected .interest-icon {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .interest-card h3 {
+            font-size: 16px;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+        
+        .interest-card p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        
+        /* Priority Selection */
+        .priority-section {
+            margin-top: 50px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        
+        .priority-section.reveal {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .priority-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .priority-title {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+        
+        .priority-subtitle {
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .priority-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .priority-item {
+            display: flex;
+            align-items: center;
+            background: var(--light-color);
+            padding: 15px;
+            border-radius: 10px;
+            transition: var(--transition);
+            cursor: move;
+        }
+        
+        .priority-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        
+        .priority-item i {
+            color: var(--primary-color);
+            font-size: 20px;
+            margin-right: 15px;
+        }
+        
+        .priority-item .drag-handle {
+            cursor: move;
+            margin-right: 15px;
+            color: var(--text-light);
+        }
+        
+        .priority-info {
+            flex: 1;
+        }
+        
+        .priority-info h4 {
+            margin-bottom: 5px;
+        }
+        
+        .priority-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .priority-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .priority-btn:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 50px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-outline {
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(74, 58, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(74, 58, 255, 0.4);
+        }
+        
+        /* Modal for Custom Interest */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .modal-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+        
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+        
+        .modal-content .btn {
+            margin: 0 10px;
+        }
+        
+        /* Notification */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 3000;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .interests-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+            
+            .interests-container {
+                padding: 0 20px;
+            }
+            
+            .interests-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 15px;
+            }
+            
+            .connection-options {
+                flex-direction: column;
+                max-width: 300px;
+            }
+            
+            .connection-option {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Dosti<span>शिप</span></div>
+        <a href="home.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </header>
+    
+    <div class="interests-container">
+        <div class="page-header">
+            <h1 class="page-title">Discover Your Interests</h1>
+            <p class="page-subtitle">Select your interests to find like-minded people and get better recommendations</p>
+        </div>
+        
+        <div class="connection-options">
+            <div class="connection-option active" data-type="individual">
+                <i class="fas fa-user-friends"></i>
+                <div>Individual Friends</div>
+            </div>
+            <div class="connection-option" data-type="group">
+                <i class="fas fa-users"></i>
+                <div>Friend Groups</div>
+            </div>
+        </div>
+        
+        <div class="interests-grid">
+            <!-- Individual Interests -->
+            <div class="interest-card selected" data-interest="drawing" data-type="individual">
+                <div class="interest-icon">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <h3>Drawing</h3>
+                <p>Sketching, painting, digital art</p>
+            </div>
+            <div class="interest-card" data-interest="music" data-type="individual">
+                <div class="interest-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <h3>Music</h3>
+                <p>Listening, playing instruments</p>
+            </div>
+            <div class="interest-card" data-interest="photography" data-type="individual">
+                <div class="interest-icon">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <h3>Photography</h3>
+                <p>Capturing moments</p>
+            </div>
+            <div class="interest-card" data-interest="theater" data-type="individual">
+                <div class="interest-icon">
+                    <i class="fas fa-theater-masks"></i>
+                </div>
+                <h3>Theater</h3>
+                <p>Drama, acting, plays</p>
+            </div>
+            <div class="interest-card" data-interest="gaming" data-type="individual">
+                <div class="interest-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3>Gaming</h3>
+                <p>Video games, board games</p>
+            </div>
+            <div class="interest-card" data-interest="movies" data-type="individual">
+                <div class="interest-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h3>Movies</h3>
+                <p>Watching, discussing films</p>
+            </div>
+            <div class="interest-card" data-interest="reading" data-type="individual">
+                <div class="interest-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3>Reading</h3>
+                <p>Books, novels, comics</p>
+            </div>
+            <div class="interest-card" data-interest="cooking" data-type="individual">
+                <div class="interest-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h3>Cooking</h3>
+                <p>Recipes, food experiments</p>
+            </div>
+            <!-- Group Interests -->
+            <div class="interest-card" data-interest="running" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-running"></i>
+                </div>
+                <h3>Running</h3>
+                <p>Jogging, marathons</p>
+            </div>
+            <div class="interest-card" data-interest="basketball" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-basketball-ball"></i>
+                </div>
+                <h3>Basketball</h3>
+                <p>Playing, watching</p>
+            </div>
+            <div class="interest-card" data-interest="swimming" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-swimmer"></i>
+                </div>
+                <h3>Swimming</h3>
+                <p>Pool, open water</p>
+            </div>
+            <div class="interest-card" data-interest="cycling" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-biking"></i>
+                </div>
+                <h3>Cycling</h3>
+                <p>Road, mountain biking</p>
+            </div>
+            <div class="interest-card" data-interest="coding" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3>Coding</h3>
+                <p>Programming, development</p>
+            </div>
+            <div class="interest-card" data-interest="languages" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-language"></i>
+                </div>
+                <h3>Languages</h3>
+                <p>Learning new languages</p>
+            </div>
+            <div class="interest-card" data-interest="science" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-microscope"></i>
+                </div>
+                <h3>Science</h3>
+                <p>Discoveries, experiments</p>
+            </div>
+            <div class="interest-card" data-interest="finance" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Finance</h3>
+                <p>Investing, trading</p>
+            </div>
+            <div class="interest-card" data-interest="hiking" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-hiking"></i>
+                </div>
+                <h3>Hiking</h3>
+                <p>Nature trails, camping</p>
+            </div>
+            <div class="interest-card" data-interest="travel" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-plane"></i>
+                </div>
+                <h3>Travel</h3>
+                <p>Exploring new places</p>
+            </div>
+            <div class="interest-card" data-interest="pets" data-type="group" style="display: none;">
+                <div class="interest-icon">
+                    <i class="fas fa-dog"></i>
+                </div>
+                <h3>Pets</h3>
+                <p>Dogs, cats, animals</p>
+            </div>
+            <div class="interest-card custom-interest" data-interest="custom">
+                <div class="interest-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h3>Add Custom</h3>
+                <p>Create your own interest</p>
+            </div>
+        </div>
+        
+        <div class="priority-section">
+            <div class="priority-header">
+                <h3 class="priority-title">Set Your Priority Interests</h3>
+                <p class="priority-subtitle">Drag to reorder your top interests. These will be used to find your best matches.</p>
+            </div>
+            
+            <div class="priority-list" id="priorityList">
+                <div class="priority-item" draggable="true" data-interest="drawing">
+                    <i class="fas fa-grip-lines drag-handle"></i>
+                    <div class="interest-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <div class="priority-info">
+                        <h4>Drawing</h4>
+                        <p>Your top priority</p>
+                    </div>
+                    <div class="priority-actions">
+                        <button class="priority-btn remove-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="#" class="btn btn-outline">Skip for Now</a>
+            <a href="#" class="btn btn-primary" id="saveInterests">Save Interests</a>
+        </div>
+    </div>
+
+    <!-- Modal for Custom Interest -->
+    <div class="modal" id="customInterestModal">
+        <div class="modal-content">
+            <h2>Add Custom Interest</h2>
+            <input type="text" id="customInterestInput" placeholder="Enter your custom interest">
+            <div>
+                <button class="btn btn-outline" id="cancelCustom">Cancel</button>
+                <button class="btn btn-primary" id="addCustom">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const maxSelections = 5;
+            let selectedInterests = new Set(['drawing']);
+            const connectionOptions = document.querySelectorAll('.connection-option');
+            const interestCards = document.querySelectorAll('.interest-card');
+            const priorityList = document.getElementById('priorityList');
+            const customInterestModal = document.getElementById('customInterestModal');
+            const customInterestInput = document.getElementById('customInterestInput');
+            const addCustomBtn = document.getElementById('addCustom');
+            const cancelCustomBtn = document.getElementById('cancelCustom');
+            const saveInterestsBtn = document.getElementById('saveInterests');
+            const notification = document.getElementById('notification');
+
+            // Show Notification
+            function showNotification(message, duration = 3000) {
+                notification.textContent = message;
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, duration);
+            }
+
+            // Connection Type Selection
+            connectionOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    connectionOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    const type = this.getAttribute('data-type');
+                    interestCards.forEach(card => {
+                        if (card.classList.contains('custom-interest') || card.getAttribute('data-type') === type) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Interest Card Selection
+            interestCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    if (this.classList.contains('custom-interest')) {
+                        customInterestModal.style.display = 'flex';
+                        return;
+                    }
+                    const interest = this.getAttribute('data-interest');
+                    if (selectedInterests.has(interest)) {
+                        this.classList.remove('selected');
+                        selectedInterests.delete(interest);
+                        removePriorityItem(interest);
+                    } else if (selectedInterests.size < maxSelections) {
+                        this.classList.add('selected');
+                        selectedInterests.add(interest);
+                        addPriorityItem(interest, this.querySelector('h3').textContent, this.querySelector('.interest-icon i').className);
+                    } else {
+                        showNotification(`You can select up to ${maxSelections} interests.`);
+                    }
+                });
+            });
+
+            // Add Custom Interest
+            addCustomBtn.addEventListener('click', function() {
+                const customInterest = customInterestInput.value.trim();
+                if (customInterest && selectedInterests.size < maxSelections) {
+                    const interestId = `custom-${customInterest.toLowerCase().replace(/\s+/g, '-')}`;
+                    if (!selectedInterests.has(interestId)) {
+                        selectedInterests.add(interestId);
+                        const newCard = document.createElement('div');
+                        newCard.className = 'interest-card selected';
+                        newCard.setAttribute('data-interest', interestId);
+                        newCard.setAttribute('data-type', document.querySelector('.connection-option.active').getAttribute('data-type'));
+                        newCard.innerHTML = `
+                            <div class="interest-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3>${customInterest}</h3>
+                            <p>Custom interest</p>
+                        `;
+                        document.querySelector('.interests-grid').insertBefore(newCard, document.querySelector('.custom-interest'));
+                        addPriorityItem(interestId, customInterest, 'fas fa-star');
+                        customInterestModal.style.display = 'none';
+                        customInterestInput.value = '';
+                    } else {
+                        showNotification('This interest already exists.');
+                    }
+                } else if (selectedInterests.size >= maxSelections) {
+                    showNotification(`You can select up to ${maxSelections} interests.`);
+                } else {
+                    showNotification('Please enter a valid interest.');
+                }
+            });
+
+            cancelCustomBtn.addEventListener('click', function() {
+                customInterestModal.style.display = 'none';
+                customInterestInput.value = '';
+            });
+
+            // Add Priority Item
+            function addPriorityItem(interest, name, iconClass) {
+                const item = document.createElement('div');
+                item.className = 'priority-item';
+                item.setAttribute('draggable', 'true');
+                item.setAttribute('data-interest', interest);
+                item.innerHTML = `
+                    <i class="fas fa-grip-lines drag-handle"></i>
+                    <div class="interest-icon">
+                        <i class="${iconClass}"></i>
+                    </div>
+                    <div class="priority-info">
+                        <h4>${name}</h4>
+                        <p>${priorityList.children.length === 0 ? 'Your top priority' : 'Priority interest'}</p>
+                    </div>
+                    <div class="priority-actions">
+                        <button class="priority-btn remove-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                priorityList.appendChild(item);
+                bindPriorityEvents(item);
+            }
+
+            // Remove Priority Item
+            function removePriorityItem(interest) {
+                const item = priorityList.querySelector(`[data-interest="${interest}"]`);
+                if (item) {
+                    item.remove();
+                    const card = document.querySelector(`.interest-card[data-interest="${interest}"]`);
+                    if (card) {
+                        card.classList.remove('selected');
+                    }
+                    selectedInterests.delete(interest);
+                }
+            }
+
+            // Bind Priority Item Events
+            function bindPriorityEvents(item) {
+                const removeBtn = item.querySelector('.remove-btn');
+                removeBtn.addEventListener('click', function() {
+                    const interest = item.getAttribute('data-interest');
+                    removePriorityItem(interest);
+                });
+
+                item.addEventListener('dragstart', function(e) {
+                    item.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', '');
+                });
+
+                item.addEventListener('dragend', function() {
+                    item.classList.remove('dragging');
+                });
+
+                item.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                });
+
+                item.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    const dragging = document.querySelector('.dragging');
+                    if (dragging !== item) {
+                        const allItems = [...priorityList.querySelectorAll('.priority-item')];
+                        const draggingIndex = allItems.indexOf(dragging);
+                        const targetIndex = allItems.indexOf(item);
+                        if (draggingIndex < targetIndex) {
+                            priorityList.insertBefore(dragging, item.nextSibling);
+                        } else {
+                            priorityList.insertBefore(dragging, item);
+                        }
+                    }
+                });
+            }
+
+            // Initialize Priority Items
+            document.querySelectorAll('.priority-item').forEach(bindPriorityEvents);
+
+            // Save Interests
+            saveInterestsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (priorityList.children.length === 0) {
+                    showNotification('Please select at least one interest to prioritize.');
+                    return;
+                }
+                const prioritized = [...priorityList.querySelectorAll('.priority-item')].map(item => ({
+                    interest: item.getAttribute('data-interest'),
+                    name: item.querySelector('h4').textContent
+                }));
+                console.log('Saved Interests:', prioritized); // In a real app, send to server
+                showNotification('Interests saved successfully!');
+                // Optionally redirect or update UI
+            });
+
+            // Scroll Reveal Animations
+            const revealElements = document.querySelectorAll('.interests-grid, .priority-section');
+            const revealOnScroll = () => {
+                const windowHeight = window.innerHeight;
+                revealElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    if (elementTop < windowHeight - 100) {
+                        element.classList.add('reveal');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll(); // Initial check on page load
+        });
+    </script>
+</body>
+</html>
