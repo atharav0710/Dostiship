@@ -1,0 +1,623 @@
+
+--primary-color: #4a3aff;
+--secondary-color: #6c63ff;
+--accent-color: #ff6b6b;
+--dark-color: #26233d;
+--light-color: #f8f9fa;
+--text-color: #333;
+--text-light: #777;
+--transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Poppins', sans-serif;
+}
+
+body {
+background-color: var(--light-color);
+color: var(--text-color);
+line-height: 1.6;
+overflow-x: hidden;
+}
+
+.header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: rgba(255, 255, 255, 0.95);
+padding: 15px 50px;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+position: fixed;
+width: 100%;
+top: 0;
+z-index: 1000;
+backdrop-filter: blur(8px);
+-webkit-backdrop-filter: blur(8px);
+transition: var(--transition);
+}
+
+.header.scrolled {
+padding: 10px 50px;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+font-size: 28px;
+font-weight: 700;
+color: var(--primary-color);
+letter-spacing: 1px;
+}
+
+.logo span {
+color: var(--accent-color);
+}
+
+.nav-container {
+display: flex;
+align-items: center;
+}
+
+.nav-links {
+list-style: none;
+display: flex;
+gap: 25px;
+margin: 0;
+padding: 0;
+}
+
+.nav-links a {
+text-decoration: none;
+color: var(--dark-color);
+font-size: 16px;
+font-weight: 500;
+position: relative;
+padding: 5px 0;
+transition: var(--transition);
+white-space: nowrap;
+}
+
+.nav-links a:after {
+content: '';
+position: absolute;
+width: 0;
+height: 2px;
+bottom: 0;
+left: 0;
+background-color: var(--primary-color);
+transition: var(--transition);
+}
+
+.nav-links a:hover {
+color: var(--primary-color);
+}
+
+.nav-links a:hover:after {
+width: 100%;
+}
+
+.hamburger {
+display: none;
+font-size: 24px;
+cursor: pointer;
+color: var(--dark-color);
+}
+
+.profile-section {
+padding: 120px 50px 100px;
+max-width: 850px;
+margin: 0 auto;
+background: white;
+border-radius: 15px;
+box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+animation: fadeIn 1s ease-in-out;
+}
+
+.section-title {
+font-size: 2rem;
+margin-bottom: 25px;
+color: var(--dark-color);
+position: relative;
+animation: slideInFromTop 1s ease-in-out;
+}
+
+.section-title:after {
+content: '';
+position: absolute;
+width: 50px;
+height: 4px;
+bottom: -8px;
+left: 0;
+background: var(--primary-color);
+border-radius: 2px;
+}
+
+.profile-container {
+display: flex;
+flex-direction: column;
+gap: 30px;
+}
+
+.profile-info, .bookmarks {
+padding: 20px;
+border-radius: 8px;
+background: var(--light-color);
+}
+
+.profile-info h3, .bookmarks h3 {
+font-size: 1.5rem;
+margin-bottom: 15px;
+color: var(--dark-color);
+}
+
+.profile-details {
+display: grid;
+grid-template-columns: 1fr 2fr;
+gap: 10px;
+font-size: 14px;
+}
+
+.profile-details span.label {
+font-weight: 500;
+color: var(--text-light);
+}
+
+.edit-btn, .save-btn, .cancel-btn {
+background: var(--primary-color);
+color: white;
+padding: 8px 20px;
+border: none;
+border-radius: 50px;
+cursor: pointer;
+font-size: 14px;
+font-weight: 600;
+transition: var(--transition);
+margin-top: 15px;
+}
+
+.edit-btn:hover, .save-btn:hover, .cancel-btn:hover {
+background: var(--secondary-color);
+transform: translateY(-3px);
+}
+
+.edit-form {
+display: none;
+flex-direction: column;
+gap: 15px;
+}
+
+.form-group {
+display: flex;
+flex-direction: column;
+}
+
+.form-group label {
+font-size: 14px;
+font-weight: 500;
+margin-bottom: 5px;
+}
+
+.form-group input, .form-group select {
+padding: 10px;
+border: 1px solid var(--text-light);
+border-radius: 8px;
+font-size: 14px;
+transition: var(--transition);
+}
+
+.form-group input:focus, .form-group select:focus {
+outline: none;
+border-color: var(--primary-color);
+box-shadow: 0 0 0 3px rgba(74, 58, 255, 0.1);
+}
+
+.bookmarks ul {
+list-style: none;
+padding: 0;
+}
+
+.bookmarks li {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px 0;
+border-bottom: 1px solid var(--text-light);
+}
+
+.remove-bookmark {
+background: var(--accent-color);
+color: white;
+border: none;
+padding: 5px 10px;
+border-radius: 5px;
+cursor: pointer;
+font-size: 12px;
+transition: var(--transition);
+}
+
+.remove-bookmark:hover {
+background: #e55a5a;
+}
+
+.notification-popup {
+position: fixed;
+top: 20px;
+right: 20px;
+background: var(--primary-color);
+color: white;
+padding: 15px 20px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+z-index: 2000;
+display: none;
+animation: slideInFromRight 0.3s ease-in-out;
+}
+
+.notification-popup.error {
+background: var(--accent-color);
+}
+
+/* Animations */
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+@keyframes slideInFromTop {
+from { 
+    opacity: 0;
+    transform: translateY(-50px);
+}
+to { 
+    opacity: 1;
+    transform: translateY(0);
+}
+}
+
+@keyframes slideInFromRight {
+from { 
+    opacity: 0;
+    transform: translateX(50px);
+}
+to { 
+    opacity: 1;
+    transform: translateX(0);
+}
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+.header {
+    padding: 15px 30px;
+}
+
+.header.scrolled {
+    padding: 10px 30px;
+}
+
+.profile-section {
+    padding: 100px 30px 80px;
+}
+}
+
+@media (max-width: 768px) {
+.header {
+    flex-direction: column;
+    text-align: center;
+    padding: 15px 20px;
+}
+
+.header.scrolled {
+    padding: 10px 20px;
+}
+
+.hamburger {
+    display: block;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+}
+
+.nav-container {
+    display: none;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.nav-container.active {
+    display: block;
+}
+
+.nav-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.profile-section {
+    padding: 100px 20px 60px;
+    width: 90%;
+}
+
+.profile-details {
+    grid-template-columns: 1fr;
+}
+}
+</style>
+</head>
+<body>
+<header class="header">
+<button class="hamburger"><i class="fas fa-bars"></i></button>
+<div class="logo">Dosti<span>शिप</span></div>
+<nav class="nav-container">
+<ul class="nav-links">
+    <li><a href="./page.html">Home</a></li>
+    <li><a href="./about.html">About</a></li>
+    <li><a href="./services.html">Services</a></li>
+    <li><a href="./contact.html">Contact</a></li>
+    <li><a href="./register.html">Register</a></li>
+    <li><a href="./profile.html">Profile</a></li>
+</ul>
+</nav>
+</header>
+
+<section class="profile-section">
+<h2 class="section-title">My Profile</h2>
+<div class="profile-container">
+<div class="profile-info">
+    <h3>Personal Information</h3>
+    <div class="profile-details">
+        <span class="label">First Name:</span>
+        <span id="firstName"></span>
+        <span class="label">Last Name:</span>
+        <span id="lastName"></span>
+        <span class="label">Username:</span>
+        <span id="username"></span>
+        <span class="label">Email:</span>
+        <span id="email"></span>
+        <span class="label">Gender:</span>
+        <span id="gender"></span>
+    </div>
+    <button class="edit-btn">Edit Profile</button>
+    <form id="editForm" class="edit-form">
+        <div class="form-group">
+            <label for="editFirstName">First Name</label>
+            <input type="text" id="editFirstName" name="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="editLastName">Last Name</label>
+            <input type="text" id="editLastName" name="lastName" required>
+        </div>
+        <div class="form-group">
+            <label for="editUsername">Username</label>
+            <input type="text" id="editUsername" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="editGender">Gender</label>
+            <select id="editGender" name="gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="editPassword">New Password (optional)</label>
+            <input type="password" id="editPassword" name="password">
+        </div>
+        <div class="form-group">
+            <label for="editConfirmPassword">Confirm New Password</label>
+            <input type="password" id="editConfirmPassword" name="confirmPassword">
+        </div>
+        <div>
+            <button type="submit" class="save-btn">Save Changes</button>
+            <button type="button" class="cancel-btn">Cancel</button>
+        </div>
+    </form>
+</div>
+<div class="bookmarks">
+    <h3>My Bookmarked Services</h3>
+    <ul id="bookmarkList"></ul>
+</div>
+</div>
+</section>
+
+<div class="notification-popup" id="notificationPopup"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const header = document.querySelector('.header');
+const hamburger = document.querySelector('.hamburger');
+const navContainer = document.querySelector('.nav-container');
+const editBtn = document.querySelector('.edit-btn');
+const editForm = document.getElementById('editForm');
+const cancelBtn = document.querySelector('.cancel-btn');
+const notificationPopup = document.getElementById('notificationPopup');
+const profileDetails = document.querySelector('.profile-details');
+const bookmarkList = document.getElementById('bookmarkList');
+
+// Show Notification
+function showNotification(message, type = 'success', duration = 3000) {
+    console.log`(Notification: ${message} (${type}))`;
+    notificationPopup.textContent = message;
+    notificationPopup.className = notification-popup `${type}`;
+    notificationPopup.style.display = 'block';
+    setTimeout(() => {
+        notificationPopup.style.display = 'none';
+    }, duration);
+}
+
+// Sanitize Input
+function sanitizeInput(input) {
+    const div = document.createElement('div');
+    div.textContent = input;
+    return div.innerHTML;
+}
+
+// Get Current User
+const currentUserEmail = localStorage.getItem('currentUser');
+if (!currentUserEmail) {
+    showNotification('Please log in to view your profile', 'error', 5000);
+    setTimeout(() => {
+        window.location.assign('./login.html');
+    }, 5000);
+    return;
+}
+
+const users = JSON.parse(localStorage.getItem('users') || '[]');
+const user = users.find(u => u.email === currentUserEmail);
+if (!user) {
+    showNotification('User not found. Please log in again.', 'error', 5000);
+    setTimeout(() => {
+        window.location.assign('./login.html');
+    }, 5000);
+    return;
+}
+
+// Display User Info
+document.getElementById('firstName').textContent = user.firstName;
+document.getElementById('lastName').textContent = user.lastName;
+document.getElementById('username').textContent = user.username;
+document.getElementById('email').textContent = user.email;
+document.getElementById('gender').textContent = user.gender;
+
+// Display Bookmarks
+const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+function renderBookmarks() {
+    bookmarkList.innerHTML = '';
+    if (bookmarks.length === 0) {
+        bookmarkList.innerHTML = '<li>No bookmarked services.</li>';
+        return;
+    }
+    bookmarks.forEach(bookmark => {
+        const li = document.createElement('li');
+        li.textContent = bookmark;
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-bookmark';
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => {
+            const index = bookmarks.indexOf(bookmark);
+            bookmarks.splice(index, 1);
+            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+            renderBookmarks();
+            showNotification`(${bookmark} removed from bookmarks)`;
+        });
+        li.appendChild(removeBtn);
+        bookmarkList.appendChild(li);
+    });
+}
+renderBookmarks();
+
+// Sticky Header
+window.addEventListener('scroll', function() {
+    header.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Hamburger Menu
+hamburger.addEventListener('click', function() {
+    navContainer.classList.toggle('active');
+});
+
+// Close menu on link click
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', function() {
+        navContainer.classList.remove('active');
+    });
+});
+
+// Edit Profile
+editBtn.addEventListener('click', function() {
+    profileDetails.style.display = 'none';
+    editBtn.style.display = 'none';
+    editForm.style.display = 'flex';
+    document.getElementById('editFirstName').value = user.firstName;
+    document.getElementById('editLastName').value = user.lastName;
+    document.getElementById('editUsername').value = user.username;
+    document.getElementById('editGender').value = user.gender;
+});
+
+cancelBtn.addEventListener('click', function() {
+    profileDetails.style.display = 'grid';
+    editBtn.style.display = 'block';
+    editForm.style.display = 'none';
+});
+
+// Validate and Save Profile Changes
+editForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const firstName = sanitizeInput(document.getElementById('editFirstName').value);
+    const lastName = sanitizeInput(document.getElementById('editLastName').value);
+    const username = sanitizeInput(document.getElementById('editUsername').value);
+    const gender = document.getElementById('editGender').value;
+    const password = document.getElementById('editPassword').value;
+    const confirmPassword = document.getElementById('editConfirmPassword').value;
+
+    // Validation
+    const nameRegex = /^[a-zA-Z\s]{2,}$/;
+    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+    const passwordRegex = /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,}$/;
+
+    if (!nameRegex.test(firstName)) {
+        showNotification('First Name must be at least 2 characters, letters only', 'error');
+        return;
+    }
+    if (!nameRegex.test(lastName)) {
+        showNotification('Last Name must be at least 2 characters, letters only', 'error');
+        return;
+    }
+    if (!usernameRegex.test(username)) {
+        showNotification('Username must be 3-20 characters, alphanumeric or underscore', 'error');
+        return;
+    }
+    if (users.some(u => u.username === username && u.email !== user.email)) {
+        showNotification('Username already taken', 'error');
+        return;
+    }
+    if (password && !passwordRegex.test(password)) {
+        showNotification('Password must be at least 8 characters, including a letter and a number', 'error');
+        return;
+    }
+    if (password && password !== confirmPassword) {
+        showNotification('Passwords do not match', 'error');
+        return;
+    }
+
+    // Update User Data
+    const userIndex = users.findIndex(u => u.email === user.email);
+    users[userIndex] = {
+        ...user,
+        firstName,
+        lastName,
+        username,
+        gender,
+        password: password ? btoa(password) : user.password,
+        createdAt: user.createdAt
+    };
+    localStorage.setItem('users', JSON.stringify(users));
+
+    // Update Display
+    document.getElementById('firstName').textContent = firstName;
+    document.getElementById('lastName').textContent = lastName;
+    document.getElementById('username').textContent = username;
+    document.getElementById('gender').textContent = gender;
+
+    profileDetails.style.display = 'grid';
+    editBtn.style.display = 'block';
+    editForm.style.display = 'none';
+    showNotification('Profile updated successfully!');
+});
+
+// Close menu on outside click
+document.addEventListener('click', function(e) {
+    if (!navContainer.contains(e.target) && !hamburger.contains(e.target)) {
+        navContainer.classList.remove('active');
+    }
+});
+
+console.log('Profile page initialized');
+});
+</script>
+</body>
+</html>
