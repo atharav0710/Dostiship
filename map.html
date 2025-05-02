@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dostiship Map - Chitkara University</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+
+        .user-popup {
+            text-align: center;
+        }
+
+        .user-popup h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .user-popup p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .user-popup img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .leaflet-marker-icon {
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: #fff;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #back-button:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .leaflet-control-zoom {
+            position: absolute;
+            bottom: 10px !important;
+            right: 10px !important;
+            top: auto !important;
+            left: auto !important;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="back-button" onclick="window.history.back()">Back</button>
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Sample friends data (simulated, replace with actual data from a backend)
+        const friends = [
+            {
+                name: "Alex",
+                image: "./static/profileimg.jpg",
+                interests: "Hiking, Music",
+                latitude: 30.517459, // Near Chitkara University
+                longitude: 76.660210
+            },
+            {
+                name: "Sam",
+                image: "./static/profileimg.jpg",
+                interests: "Reading, Gaming",
+                latitude: 30.515459,
+                longitude: 76.658210
+            },
+            {
+                name: "Priya",
+                image: "./static/profileimg.jpg",
+                interests: "Photography, Travel",
+                latitude: 30.518459,
+                longitude: 76.661210
+            }
+        ];
+
+        // Initialize the map, centered on Chitkara University by default
+        const map = L.map('map', {
+            zoomControl: true
+        }).setView([30.516459, 76.659210], 15);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Function to set map to Chitkara University as default
+        function setDefaultLocation() {
+            const defaultLat = 30.516459;
+            const defaultLng = 76.659210;
+            map.setView([defaultLat, defaultLng], 15);
+
+            // Add a default marker for Chitkara University
+            L.marker([defaultLat, defaultLng])
+                .addTo(map)
+                .bindPopup('<b>Chitkara University</b>')
+                .openPopup();
+        }
+
+        // Function to add friends to the map
+        function addFriendsToMap() {
+            friends.forEach(friend => {
+                const popupContent = `
+            <div class="user-popup">
+                <img src="${friend.image}" alt="${friend.name}'s image">
+                <h3>${friend.name}</h3>
+                <p>Interests: ${friend.interests}</p>
+            </div>
+        `;
+                L.marker([friend.latitude, friend.longitude])
+                    .addTo(map)
+                    .bindPopup(popupContent);
+            });
+        }
+
+        // Try to get the user's location and center the map
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    map.setView([latitude, longitude], 15);
+
+                    // Add user's marker with a default image in the popup
+                    const userPopupContent = `
+                <div class="user-popup">
+                    <img src="./static/profileimg.jpg">
+                    <h3>You</h3>
+                    <p>Interests: Not specified</p>
+                </div>
+            `;
+                    L.marker([latitude, longitude])
+                        .addTo(map)
+                        .bindPopup(userPopupContent)
+                        .openPopup();
+
+                    // Add friends to the map after centering on user
+                    addFriendsToMap();
+                },
+                (error) => {
+                    console.error('Geolocation error:', error);
+                    alert('Unable to access your location. Using Chitkara University as default location.');
+                    setDefaultLocation();
+                    addFriendsToMap();
+                }
+            );
+        } else {
+            alert('Geolocation is not supported by your browser. Using Chitkara University as default location.');
+            setDefaultLocation();
+            addFriendsToMap();
+        }
+    </script>
+</body>
+
+</html>
