@@ -70,9 +70,10 @@
         .nav-links {
             list-style: none;
             display: flex;
-            gap: 25px;
-            margin: 0;
+            gap: 20px;
+            margin: 1px;
             padding: 0;
+            border: 1px;
         }
 
         .nav-links a {
@@ -81,7 +82,7 @@
             font-size: 16px;
             font-weight: 500;
             position: relative;
-            padding: 5px 0;
+            padding: 2px 0;
             transition: var(--transition);
             white-space: nowrap;
         }
@@ -564,7 +565,8 @@
             .nav-container {
                 display: none;
                 width: 100%;
-                margin-top: 20px;
+                margin-top: 50px; /* Increased to prevent clipping */
+                padding-bottom: 20px; /* Added to ensure space for last link */
             }
 
             .nav-container.active {
@@ -574,8 +576,14 @@
             .nav-links {
                 flex-direction: column;
                 align-items: center;
-                gap: 15px;
+                gap: 20px; /* Increased for better spacing */
                 margin-top: 15px;
+                padding: 10px 0; /* Added padding for visibility */
+            }
+
+            .nav-links a {
+                font-size: 18px; /* Slightly larger for clarity */
+                padding: 10px 0; /* Increased padding for touch targets */
             }
 
             .services-section {
@@ -770,23 +778,22 @@
 
             // Close menu on link click
             document.querySelectorAll('.nav-links a').forEach(link => {
-                link.addEventListener('click', function(e) {
+                link.addEventListener('click', function() {
                     navContainer.classList.remove('active');
                 });
             });
 
-            // Smooth Scrolling
-            document.querySelectorAll('a[href^="./"]').forEach(anchor => {
+            // Smooth Scrolling for Same-Page Links Only
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
+                    const targetId = this.getAttribute('href').substring(1);
+                    const target = document.getElementById(targetId);
                     if (target) {
                         window.scrollTo({
                             top: target.offsetTop - 80,
                             behavior: 'smooth'
                         });
-                    } else {
-                        window.location.href = this.getAttribute('href');
                     }
                 });
             });
