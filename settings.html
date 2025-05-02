@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dostiशिप - Settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a3aff;
+            --secondary-color: #6c63ff;
+            --accent-color: #ff6b6b;
+            --dark-color: #26233d;
+            --light-color: #f8f9fa;
+            --text-color: #333;
+            --text-light: #777;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        [data-theme="dark"] {
+            --light-color: #26233d;
+            --dark-color: #f8f9fa;
+            --text-color: #e0e0e0;
+            --text-light: #aaa;
+            --primary-color: #8a7cff;
+            --secondary-color: #9a91ff;
+            --accent-color: #ff8787;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 50px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .header[data-theme="dark"] {
+            background: rgba(38, 35, 61, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        #back-button {
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(74, 58, 255, 0.3);
+        }
+
+        #back-button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(74, 58, 255, 0.4);
+        }
+
+        #back-button:active {
+            transform: translateY(1px);
+        }
+
+        .settings-container {
+            padding: 80px 50px 50px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .settings-container h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--dark-color);
+        }
+
+        .settings-container h2[data-theme="dark"] {
+            color: var(--light-color);
+        }
+
+        .setting-option {
+            margin-bottom: 40px;
+            text-align: left;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .setting-option[data-theme="dark"] {
+            background: #333;
+        }
+
+        .setting-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .setting-option label {
+            font-size: 1.2rem;
+            margin-right: 20px;
+            color: var(--text-color);
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .avatar-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-left: 20px;
+            vertical-align: middle;
+        }
+
+        .file-input {
+            margin-top: 10px;
+            display: block;
+        }
+
+        .toggle {
+            display: inline-block;
+            position: relative;
+            width: 60px;
+            height: 34px;
+            vertical-align: middle;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: var(--transition);
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        select,
+        input[type="password"] {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid var(--text-light);
+            font-size: 1rem;
+            color: var(--text-color);
+            background: var(--light-color);
+            transition: var(--transition);
+            margin: 5px 0;
+        }
+
+        select:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(74, 58, 255, 0.3);
+        }
+
+        .password-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .action-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(74, 58, 255, 0.4);
+        }
+
+        .action-btn.danger {
+            background: var(--accent-color);
+        }
+
+        .action-btn.danger:hover {
+            background: #ff8787;
+        }
+
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 3000;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content[data-theme="dark"] {
+            background: #333;
+        }
+
+        .modal-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+
+        .modal-content p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .modal-content .btn {
+            margin: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .settings-container {
+                padding: 80px 20px 50px;
+            }
+
+            .setting-option {
+                padding: 15px;
+            }
+
+            .setting-option label {
+                font-size: 1rem;
+            }
+
+            .avatar-preview {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">Dosti<span>शिप</span></div>
+        <button id="back-button" onclick="window.history.back()">Back</button>
+    </header>
+
+    <div class="settings-container">
+        <h2>Settings</h2>
+
+        <!-- Change Avatar -->
+        <div class="setting-option">
+            <label for="avatar-upload">Change Profile Avatar</label>
+            <img src="https://via.placeholder.com/50?text=User" alt="Current Avatar" id="avatar-preview"
+                class="avatar-preview">
+            <input type="file" id="avatar-upload" accept="image/*" class="file-input" onchange="updateAvatar(this)">
+        </div>
+
+        <!-- Theme Toggle -->
+        <div class="setting-option">
+            <label for="theme-toggle">Toggle Theme (Light/Dark)</label>
+            <label class="toggle">
+                <input type="checkbox" id="theme-toggle" onchange="toggleTheme(this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- Notifications Toggle -->
+        <div class="setting-option">
+            <label for="notifications-toggle">Enable Notifications</label>
+            <label class="toggle">
+                <input type="checkbox" id="notifications-toggle" onchange="toggleNotifications(this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- Privacy Settings -->
+        <div class="setting-option">
+            <label for="privacy-toggle">Hide Profile from Public Search</label>
+            <label class="toggle">
+                <input type="checkbox" id="privacy-toggle" onchange="togglePrivacy(this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- Language Preference -->
+        <div class="setting-option">
+            <label for="language-select">Preferred Language</label>
+            <select id="language-select" onchange="changeLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="pa">Punjabi</option>
+            </select>
+        </div>
+
+        <!-- Dostiship+ Subscription -->
+        <div class="setting-option">
+            <label for="dostiship-plus-toggle">Dostiship+ Subscription</label>
+            <label class="toggle">
+                <input type="checkbox" id="dostiship-plus-toggle" onchange="toggleDostishipPlus(this.checked)">
+                <span class="slider"></span>
+            </label>
+            <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 10px;">
+                Upgrade to Dostiship+ for premium features. <a href="https://x.ai/grok"
+                    style="color: var(--primary-color);">Learn more</a>
+            </p>
+        </div>
+
+        <!-- Change Password -->
+        <div class="setting-option">
+            <label>Change Password</label>
+            <div class="password-container">
+                <input type="password" id="current-password" placeholder="Current Password">
+                <input type="password" id="new-password" placeholder="New Password">
+                <input type="password" id="confirm-password" placeholder="Confirm New Password">
+                <button class="action-btn" onclick="changePassword()">Change Password</button>
+            </div>
+        </div>
+
+        <!-- Deactivate Account -->
+        <div class="setting-option">
+            <label>Deactivate Account</label>
+            <button class="action-btn danger" onclick="openDeactivateModal()">Deactivate Account</button>
+        </div>
+
+        <!-- Delete Account -->
+        <div class="setting-option">
+            <label>Delete Account</label>
+            <button class="action-btn danger" onclick="openDeleteModal()">Delete Account</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modals -->
+    <div class="modal" id="deactivateModal">
+        <div class="modal-content">
+            <h2>Deactivate Account</h2>
+            <p>Are you sure you want to deactivate your account? You can reactivate it later by logging in.</p>
+            <button class="action-btn" onclick="deactivateAccount()">Yes, Deactivate</button>
+            <button class="action-btn" onclick="closeModal('deactivateModal')">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h2>Delete Account</h2>
+            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            <button class="action-btn danger" onclick="deleteAccount()">Yes, Delete</button>
+            <button class="action-btn" onclick="closeModal('deleteModal')">Cancel</button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        const notification = document.getElementById('notification');
+
+        // Show Notification
+        function showNotification(message, duration = 3000) {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, duration);
+        }
+
+        // Modal Controls
+        function openDeactivateModal() {
+            document.getElementById('deactivateModal').style.display = 'flex';
+        }
+
+        function openDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Change Avatar
+        function updateAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const avatarPreview = document.getElementById('avatar-preview');
+                    avatarPreview.src = e.target.result;
+                    localStorage.setItem('avatar', e.target.result);
+                    showNotification('Avatar updated successfully!');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Toggle Theme
+        function toggleTheme(isDark) {
+            document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            document.querySelector('.header').setAttribute('data-theme', isDark ? 'dark' : 'light');
+            document.querySelector('.settings-container h2').setAttribute('data-theme', isDark ? 'dark' : 'light');
+            document.querySelectorAll('.setting-option').forEach(option => {
+                option.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            });
+            document.querySelectorAll('.modal-content').forEach(modal => {
+                modal.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            });
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            showNotification(`Theme changed to ${isDark ? 'Dark' : 'Light'} mode`);
+        }
+
+        // Toggle Notifications
+        function toggleNotifications(enabled) {
+            localStorage.setItem('notifications', enabled ? 'enabled' : 'disabled');
+            showNotification(Notifications`${enabled ? 'enabled' : 'disabled'}`);
+        }
+
+        // Change Language
+        function changeLanguage(lang) {
+            localStorage.setItem('language', lang);
+            showNotification(`Language changed to ${lang === 'en' ? 'English' : lang === 'hi' ? 'Hindi' : 'Punjabi'}`);
+        }
+
+        // Change language
+        function changeLanguage(lang) {
+            localStorage.setItem('language', lang);
+            showNotification(`Language changed to ${lang === 'en' ? 'English' : lang === 'hi' ? 'Hindi' : 'Punjabi'}`);
+        }
+
+        // Toggle Dostiship+
+        function toggleDostishipPlus(enabled) {
+            localStorage.setItem('dostishipPlus', enabled ? 'enabled' : 'disabled');
+            showNotification(Dostiship + subscription`${enabled ? 'enabled' : 'disabled'}`);
+        }
+
+        // Change Password
+        function changePassword() {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showNotification('Please fill in all password fields');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showNotification('New password and confirmation do not match');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                showNotification('New password must be at least 8 characters long');
+                return;
+            }
+
+            // In a real app, this would involve a backend API call to update the password
+            localStorage.setItem('password', newPassword); // Mock storage
+            showNotification('Password changed successfully!');
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+        }
+
+        // Deactivate Account
+        function deactivateAccount() {
+            localStorage.setItem('accountStatus', 'deactivated');
+            showNotification('Account deactivated. You can reactivate by logging in.');
+            closeModal('deactivateModal');
+            // In a real app, redirect to logout or homepage
+        }
+
+        // Delete Account
+        function deleteAccount() {
+            localStorage.clear();
+            showNotification('Account deleted successfully.');
+            closeModal('deleteModal');
+            // In a real app, redirect to homepage or logout
+        }
+
+        // Apply saved settings on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.querySelector('.header').setAttribute('data-theme', 'dark');
+                document.querySelector('.settings-container h2').setAttribute('data-theme', 'dark');
+                document.querySelectorAll('.setting-option').forEach(option => {
+                    option.setAttribute('data-theme', 'dark');
+                });
+                document.querySelectorAll('.modal-content').forEach(modal => {
+                    modal.setAttribute('data-theme', 'dark');
+                });
+                document.getElementById('theme-toggle').checked = true;
+            }
+
+            // Avatar
+            const savedAvatar = localStorage.getItem('avatar');
+            if (savedAvatar) {
+                document.getElementById('avatar-preview').src = savedAvatar;
+            }
+
+            // Notifications
+            const savedNotifications = localStorage.getItem('notifications') || 'enabled';
+            document.getElementById('notifications-toggle').checked = savedNotifications === 'enabled';
+
+            // Privacy
+            const savedPrivacy = localStorage.getItem('privacy') || 'visible';
+            document.getElementById('privacy-toggle').checked = savedPrivacy === 'hidden';
+
+            // Language
+            const savedLanguage = localStorage.getItem('language') || 'en';
+            document.getElementById('language-select').value = savedLanguage;
+
+            // Dostiship+
+            const savedDostishipPlus = localStorage.getItem('dostishipPlus') || 'disabled';
+            document.getElementById('dostiship-plus-toggle').checked = savedDostishipPlus === 'enabled';
+        });
+    </script>
+</body>
+
+</html>
