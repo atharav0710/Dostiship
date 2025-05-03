@@ -468,129 +468,79 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('registerForm');
-            const inputs = form.querySelectorAll('input, select');
+            const registerForm = document.getElementById('registerForm');
             const notification = document.getElementById('notification');
 
-            // Show Notification
-            function showNotification(message, duration = 3000) {
+            // Show notification with message and type (success/error)
+            function showNotification(message, type = 'success') {
                 notification.textContent = message;
+                notification.className = `notification ${type}`;
                 notification.style.display = 'block';
                 setTimeout(() => {
                     notification.style.display = 'none';
-                }, duration);
+                }, 3000);
             }
 
-            // Sanitize Input
-            function sanitizeInput(input) {
-                const div = document.createElement('div');
-                div.textContent = input;
-                return div.innerHTML;
-            }
-
-            // Validate Input
-            function validateInput(input) {
-                let isValid = true;
-
-                if (!input.value.trim()) {
-                    isValid = false;
-                } else if (input.name === 'email') {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(input.value)) {
-                        isValid = false;
-                    } else {
-                        const users = JSON.parse(localStorage.getItem('users') || '[]');
-                        if (users.some(user => user.email === input.value)) {
-                            isValid = false;
-                        }
-                    }
-                } else if (input.name === 'username') {
-                    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-                    if (!usernameRegex.test(input.value)) {
-                        isValid = false;
-                    } else {
-                        const users = JSON.parse(localStorage.getItem('users') || '[]');
-                        if (users.some(user => user.username === input.value)) {
-                            isValid = false;
-                            showNotification('This username is already taken.');
-                        }
-                    }
-                } else if (input.name === 'password') {
-                    const passwordRegex = /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,}$/;
-                    if (!passwordRegex.test(input.value)) {
-                        isValid = false;
-                    }
-                } else if (input.name === 'confirmPassword') {
-                    const password = form.querySelector('input[name="password"]').value;
-                    if (input.value !== password) {
-                        isValid = false;
-                    }
-                } else if (input.name === 'firstName' || input.name === 'lastName') {
-                    const nameRegex = /^[a-zA-Z\s]{2,}$/;
-                    if (!nameRegex.test(input.value)) {
-                        isValid = false;
-                    }
-                }
-
-                return isValid;
-            }
-
-            // Check Form Validity
-            function checkFormValidity() {
-                let allValid = true;
-                inputs.forEach(input => {
-                    if (!validateInput(input)) {
-                        allValid = false;
-                    }
-                });
-                const terms = form.querySelector('#terms');
-                if (!terms.checked) {
-                    allValid = false;
-                }
-                return allValid;
-            }
-
-            // Real-time Validation
-            inputs.forEach(input => {
-                input.addEventListener('input', function () {
-                    if (input.name === 'username') {
-                        validateInput(input); // Trigger username check with notification
-                    }
-                });
-            });
-
-            form.querySelector('#terms').addEventListener('change', checkFormValidity);
-
-            // Form Submission
-            form.addEventListener('submit', function (e) {
+            // Form submission handler
+            registerForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                const isValidForm = checkFormValidity();
-                if (!isValidForm) {
-                    showNotification('Please correct the errors in the form.');
+
+                // Get form values
+                const firstName = this.querySelector('input[name="firstName"]').value.trim();
+                const lastName = this.querySelector('input[name="lastName"]').value.trim();
+                const username = this.querySelector('input[name="username"]').value.trim();
+                const email = this.querySelector('input[name="email"]').value.trim();
+                const gender = this.querySelector('select[name="gender"]').value;
+                const password = this.querySelector('input[name="password"]').value;
+                const confirmPassword = this.querySelector('input[name="confirmPassword"]').value;
+                const terms = this.querySelector('input[name="terms"]').checked;
+
+                // Validation
+                if (!firstName || !lastName || !username || !email || !gender || !password || !confirmPassword) {
+                    showNotification('Please fill out all required fields.', 'error');
                     return;
                 }
 
-                const userData = {
-                    firstName: sanitizeInput(form.querySelector('input[name="firstName"]').value),
-                    lastName: sanitizeInput(form.querySelector('input[name="lastName"]').value),
-                    username: sanitizeInput(form.querySelector('input[name="username"]').value),
-                    email: sanitizeInput(form.querySelector('input[name="email"]').value),
-                    gender: form.querySelector('select[name="gender"]').value,
-                    password: btoa(form.querySelector('input[name="password"]').value),
-                    createdAt: new Date().toISOString()
-                };
+                if (!email.includes('@') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    showNotification('Please enter a valid email address.', 'error');
+                    return;
+                }
 
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                users.push(userData);
+                if (password !== confirmPassword) {
+                    showNotification('Passwords do not match.', 'error');
+                    return;
+                }
+
+                if (!terms) {
+                    showNotification('You must accept the Terms of Use and Privacy Policy.', 'error');
+                    return;
+                }
+
+                // Check username uniqueness using localStorage
+                let users = JSON.parse(localStorage.getItem('users') || '[]');
+                if (users.some(user => user.username === username)) {
+                    showNotification('Username already exists.', 'error');
+                    return;
+                }
+
+                // Simulate registration
+                const newUser = {
+                    firstName,
+                    lastName,
+                    username,
+                    email,
+                    gender,
+                    password // Note: In production, never store plain passwords
+                };
+                users.push(newUser);
                 localStorage.setItem('users', JSON.stringify(users));
-                showNotification('Registration successful! Redirecting...', 2000);
+
+                // Show success and redirect
+                showNotification('Registration successful!', 'success');
                 setTimeout(() => {
-                    window.location.assign('./page.html');
+                    window.location.href = './page.html';
                 }, 2000);
             });
-
-            // Initialize Form Validation
-            checkFormValidity();
         });
     </script>
 </body>
