@@ -701,10 +701,9 @@
                 </button>
                 
                 <div class="dropdown-menu">
-                    <a href="#"><i class="fas fa-user"></i> My Profile</a>
-                    <a href="#"><i class="fas fa-cog"></i> Settings</a>
-                    <a href="#"><i class="fas fa-users"></i> Friends</a>
-                    <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <a href="./profile.html"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="./settings.html"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="./main.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
         </div>
@@ -715,13 +714,12 @@
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Menu</h3>
                 <ul class="sidebar-menu">
-                    <li><a href="#" class="active"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="#"><i class="fas fa-bell"></i> Notifications</a></li>
-                    <li><a href="#"><i class="fas fa-users"></i> Groups</a></li>
-                    <li><a href="#"><i class="fas fa-calendar-alt"></i> Events</a></li>
-                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> Friends Map</a></li>
-                    <li><a href="#"><i class="fas fa-envelope"></i> Inbox <span class="notification-badge">3</span></a></li>
-                    <li><a href="#"><i class="fas fa-heart"></i> Interests</a></li>
+                    <li><a href="./page.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="./notification.html"><i class="fas fa-bell"></i> Notifications</a></li>
+                    <li><a href="./event.html"><i class="fas fa-calendar-alt"></i> Events</a></li>
+                    <li><a href="./map.html"><i class="fas fa-map-marker-alt"></i> Friends Map</a></li>
+                    <li><a href="./inbox.html"><i class="fas fa-envelope"></i> Inbox <span class="notification-badge">3</span></a></li>
+                    <li><a href="./interest.html"><i class="fas fa-heart"></i> Interests</a></li>
                 </ul>
             </div>
             
@@ -862,207 +860,238 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    // Profile dropdown functionality
-    const profileDropdown = document.querySelector('.profile-dropdown');
-    const dropdownMenu = document.querySelector('.dropdown-menu');
-    
-    profileDropdown.addEventListener('click', function(e) {
-        e.stopPropagation();
-        dropdownMenu.classList.toggle('show');
-    });
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!profileDropdown.contains(e.target)) {
-            dropdownMenu.classList.remove('show');
-        }
-    });
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mock user data
+            const users = [
+                { id: '1', name: 'Amanatpreet Kaur', avatar: './static/profileimg.jpg', status: 'Online' },
+                { id: '2', name: 'Akhil Azad', avatar: './static/profileimg.jpg', status: 'Offline' },
+                { id: '3', name: 'Arshiya Verma', avatar: './static/profileimg.jpg', status: 'Away' }
+            ];
 
-    // Chat item selection and dynamic chat window update
-    const chatItems = document.querySelectorAll('.chat-item');
-    const chatHeaderName = document.querySelector('.chat-header-name');
-    const chatHeaderStatus = document.querySelector('.chat-header-status');
-    const chatHeaderAvatar = document.querySelector('.chat-window .chat-avatar');
-    const chatMessages = document.querySelector('.chat-messages');
-    
-    chatItems.forEach(item => {
-        item.addEventListener('click', function() {
-            // Update active state
-            chatItems.forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
+            // Initialize chat messages from localStorage or default
+            let chats = JSON.parse(localStorage.getItem('chats')) || {
+                '1': [
+                    { text: 'Hey there! How are you doing?', type: 'received', timestamp: '10:30 AM' },
+                    { text: "I'm doing great! Just finished my project.", type: 'sent', timestamp: '10:32 AM' },
+                    { text: '<div class="voice-message"><i class="fas fa-microphone"></i><div class="voice-progress"><div class="voice-progress-bar"></div></div><div class="voice-duration">0:15</div></div>', type: 'received', timestamp: '10:33 AM' },
+                    { text: '<div class="media-message"><div class="media-item"><img src="./static/profileimg.jpg" alt="Photo"></div><div class="media-item"><img src="./static/profileimg.jpg" alt="Photo"></div></div>', type: 'sent', timestamp: '10:35 AM' }
+                ],
+                '2': [],
+                '3': []
+            };
 
-            // Update chat window header
-            const name = this.querySelector('.chat-name').textContent;
-            const avatarSrc = this.querySelector('.chat-avatar').src;
-            
-            chatHeaderName.textContent = name;
-            chatHeaderAvatar.src = avatarSrc;
-            chatHeaderStatus.textContent = 'Online'; // Could be dynamic based on data
+            let currentUserId = '1'; // Default to first user
 
-            // Clear and load new messages (simulated)
-            chatMessages.innerHTML = `
-                <div class="message received">
-                    <img src="${avatarSrc}" alt="User" class="message-avatar">
-                    <div class="message-content">
-                        <div class="message-text">Hey! How's it going?</div>
-                        <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                        <div class="message-actions">
-                            <button class="message-action"><i class="fas fa-reply"></i></button>
-                            <button class="message-action"><i class="fas fa-ellipsis-h"></i></button>
+            // DOM Elements
+            const chatItems = document.querySelectorAll('.chat-item');
+            const chatMessages = document.querySelector('.chat-messages');
+            const chatHeaderName = document.querySelector('.chat-header-name');
+            const chatHeaderStatus = document.querySelector('.chat-header-status');
+            const chatHeaderAvatar = document.querySelector('.chat-header .chat-avatar');
+            const messageInput = document.querySelector('.message-input');
+            const sendBtn = document.querySelector('.send-btn');
+            const chatSearch = document.querySelector('.chat-search input');
+            const profileBtn = document.querySelector('.profile-btn');
+            const profileDropdown = document.querySelector('.profile-dropdown');
+            const sidebarMenuLinks = document.querySelectorAll('.sidebar-menu a');
+            const headerIcons = document.querySelectorAll('.icon-btn');
+
+            // Helper: Save chats to localStorage
+            function saveChats() {
+                localStorage.setItem('chats', JSON.stringify(chats));
+            }
+
+            // Helper: Format timestamp
+            function getTimestamp() {
+                const now = new Date();
+                return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            // Helper: Scroll chat to bottom
+            function scrollChatToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Render Messages
+            function renderMessages(userId) {
+                chatMessages.innerHTML = '';
+                const messages = chats[userId] || [];
+                messages.forEach(msg => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${msg.type}`;
+                    messageDiv.innerHTML = `
+                        ${msg.type === 'received' ? `<img src="./static/profileimg.jpg" alt="User" class="message-avatar">` : ''}
+                        <div class="message-content">
+                            ${msg.text}
+                            <div class="message-time">${msg.timestamp}</div>
+                            <div class="message-actions">
+                                <button class="message-action"><i class="fas fa-reply"></i></button>
+                                <button class="message-action"><i class="fas fa-ellipsis-h"></i></button>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="message sent">
-                    <div class="message-content">
-                        <div class="message-text">Doing great, thanks!</div>
-                        <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                        <div class="message-actions">
-                            <button class="message-action"><i class="fas fa-reply"></i></button>
-                            <button class="message-action"><i class="fas fa-ellipsis-h"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // Scroll to bottom of messages
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        });
-    });
+                    `;
+                    chatMessages.appendChild(messageDiv);
+                });
+                scrollChatToBottom();
+            }
 
-    // Voice message playback simulation
-    const voiceMessages = document.querySelectorAll('.voice-message');
-    voiceMessages.forEach(voice => {
-        voice.addEventListener('click', function() {
-            const progressBar = this.querySelector('.voice-progress-bar');
-            const durationText = this.querySelector('.voice-duration');
-            let isPlaying = this.classList.toggle('playing');
-            
-            if (isPlaying) {
-                // Simulate playback
-                let width = 0;
-                const duration = 15; // seconds
-                const interval = setInterval(() => {
-                    width += 100 / (duration * 10);
-                    progressBar.style.width = `${width}%`;
-                    if (width >= 100) {
-                        clearInterval(interval);
-                        this.classList.remove('playing');
-                        progressBar.style.width = '70%'; // Reset to initial
+            // Update Chat Header
+            function updateChatHeader(userId) {
+                const user = users.find(u => u.id === userId);
+                chatHeaderName.textContent = user.name;
+                chatHeaderStatus.textContent = user.status;
+                chatHeaderAvatar.src = user.avatar;
+            }
+
+            // Send Message
+            function sendMessage() {
+                const text = messageInput.value.trim();
+                if (!text) return;
+
+                const message = {
+                    text,
+                    type: 'sent',
+                    timestamp: getTimestamp()
+                };
+
+                chats[currentUserId] = chats[currentUserId] || [];
+                chats[currentUserId].push(message);
+                saveChats();
+                renderMessages(currentUserId);
+                messageInput.value = '';
+
+                // Simulate received message after 2 seconds
+                setTimeout(() => {
+                    const responses = [
+                        'That sounds awesome! 😊',
+                        'Cool, tell me more!',
+                        'Haha, nice one!'
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    chats[currentUserId].push({
+                        text: randomResponse,
+                        type: 'received',
+                        timestamp: getTimestamp()
+                    });
+                    saveChats();
+                    renderMessages(currentUserId);
+                }, 2000);
+            }
+
+            // Chat Item Selection
+            chatItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    chatItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    currentUserId = this.dataset.userId;
+                    updateChatHeader(currentUserId);
+                    renderMessages(currentUserId);
+                });
+                item.setAttribute('tabindex', '0');
+                item.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        this.click();
                     }
-                }, 100);
-            }
-        });
-    });
+                });
+            });
 
-    // Message sending functionality
-    const messageInput = document.querySelector('.message-input');
-    const sendBtn = document.querySelector('.send-btn');
-    const inputTools = document.querySelectorAll('.input-tool');
+            // Send Message on Button Click
+            sendBtn.addEventListener('click', sendMessage);
 
-    function sendMessage() {
-        const text = messageInput.value.trim();
-        if (text) {
-            const message = document.createElement('div');
-            message.className = 'message sent';
-            message.innerHTML = `
-                <div class="message-content">
-                    <div class="message-text">${text}</div>
-                    <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    <div class="message-actions">
-                        <button class="message-action"><i class="fas fa-reply"></i></button>
-                        <button class="message-action"><i class="fas fa-ellipsis-h"></i></button>
-                    </div>
-                </div>
-            `;
-            chatMessages.appendChild(message);
-            messageInput.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-    }
+            // Send Message on Enter Key
+            messageInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
 
-    sendBtn.addEventListener('click', sendMessage);
-    
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
+            // Search Chats
+            chatSearch.addEventListener('input', function () {
+                const query = this.value.toLowerCase();
+                chatItems.forEach(item => {
+                    const name = item.querySelector('.chat-name').textContent.toLowerCase();
+                    item.style.display = name.includes(query) ? 'flex' : 'none';
+                });
+            });
 
-    // Input tools functionality
-    inputTools.forEach(tool => {
-        tool.addEventListener('click', function() {
-            const icon = this.querySelector('i').className;
-            if (icon.includes('paperclip')) {
-                // Simulate file attachment
-                alert('File attachment feature not implemented');
-            } else if (icon.includes('image')) {
-                // Simulate image upload
-                const message = document.createElement('div');
-                message.className = 'message sent';
-                message.innerHTML = `
-                    <div class="message-content">
-                        <div class="media-message">
-                            <div class="media-item">
-                                <img src="./static/profileimg.jpg" alt="Photo">
-                            </div>
-                        </div>
-                        <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    </div>
+            // Profile Dropdown Toggle
+            profileBtn.addEventListener('click', function () {
+                profileDropdown.classList.toggle('active');
+            });
+
+            // Close Dropdown on Outside Click
+            document.addEventListener('click', function (e) {
+                if (!profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+
+            // Dropdown Navigation
+            document.querySelectorAll('.dropdown-menu a').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href');
+                    window.location.href = href;
+                });
+                link.setAttribute('tabindex', '0');
+                link.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        this.click();
+                    }
+                });
+            });
+
+            // Sidebar Navigation
+            sidebarMenuLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    sidebarMenuLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    const page = this.dataset.page;
+                    window.location.href = page;
+                });
+                link.setAttribute('tabindex', '0');
+                link.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        this.click();
+                    }
+                });
+            });
+
+            // Header Icons
+            headerIcons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const action = this.dataset.action;
+                    if (action === 'search') {
+                        alert('Search feature coming soon!');
+                    } else if (action === 'messages') {
+                        window.location.href = './inbox.html';
+                    }
+                });
+                btn.setAttribute('tabindex', '0');
+                btn.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        this.click();
+                    }
+                });
+            });
+
+            // Initialize Chat
+            renderMessages(currentUserId);
+            updateChatHeader(currentUserId);
+
+            // Mock Online Friends (Placeholder)
+            const onlineFriendsSection = document.querySelector('.sidebar-section:last-child');
+            const onlineFriends = ['Amanatpreet Kaur', 'Akhil Azad'];
+            onlineFriends.forEach(friend => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <a href="#" class="sidebar-menu"><i class="fas fa-user-circle"></i> ${friend}</a>
                 `;
-                chatMessages.appendChild(message);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            } else if (icon.includes('microphone')) {
-                // Simulate voice recording
-                const message = document.createElement('div');
-                message.className = 'message sent';
-                message.innerHTML = `
-                    <div class="message-content">
-                        <div class="voice-message">
-                            <i class="fas fa-microphone"></i>
-                            <div class="voice-progress">
-                                <div class="voice-progress-bar"></div>
-                            </div>
-                            <div class="voice-duration">0:15</div>
-                        </div>
-                        <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    </div>
-                `;
-                chatMessages.appendChild(message);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
+                onlineFriendsSection.appendChild(li);
+            });
         });
-    });
-
-    // Message action buttons
-    chatMessages.addEventListener('click', function(e) {
-        if (e.target.closest('.message-action')) {
-            const action = e.target.closest('.message-action').querySelector('i').className;
-            if (action.includes('reply')) {
-                alert('Reply feature not implemented');
-            } else if (action.includes('ellipsis-h')) {
-                alert('More options not implemented');
-            }
-        }
-    });
-
-    // Search functionality
-    const searchInput = document.querySelector('.chat-search input');
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        chatItems.forEach(item => {
-            const name = item.querySelector('.chat-name').textContent.toLowerCase();
-            item.style.display = name.includes(searchTerm) ? 'flex' : 'none';
-        });
-    });
-
-    // Auto-resize textarea
-    messageInput.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = `${this.scrollHeight}px`;
-    });
-});
     </script>
 </body>
 </html>
