@@ -479,5 +479,135 @@
     </div>
 
     <div class="notification-popup" id="notificationPopup"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mock room data with unique profile images
+            const rooms = [
+                {
+                    name: "Study Buddy",
+                    description: "Join fellow learners for focused study sessions.",
+                    zoomLink: "https://zoom.us/j/1234567890",
+                    avatar: "./static/study.jpg" // Placeholder for study-themed image
+                },
+                {
+                    name: "Music Charms",
+                    description: "Share and enjoy music with friends.",
+                    zoomLink: "https://zoom.us/j/0987654321",
+                    avatar: "./static/music.jpg" // Placeholder for music-themed image
+                },
+                {
+                    name: "Book Worms",
+                    description: "Discuss your favorite books and authors.",
+                    zoomLink: "https://zoom.us/j/5678901234",
+                    avatar: "./static/books.jpg" // Placeholder for book-themed image
+                },
+                {
+                    name: "Game Night",
+                    description: "Hang out for fun virtual games.",
+                    zoomLink: "https://zoom.us/j/4321098765",
+                    avatar: "./static/games.jpg" // Placeholder for game-themed image
+                }
+            ];
+
+            const notificationPopup = document.getElementById('notificationPopup');
+
+            // Show Notification
+            function showNotification(message, type = 'success', duration = 3000) {
+                notificationPopup.textContent = message;
+                notificationPopup.className = `notification-popup ${type}`;
+                notificationPopup.style.display = 'block';
+                setTimeout(() => {
+                    notificationPopup.style.display = 'none';
+                }, duration);
+            }
+
+            // Hamburger Menu
+            const hamburger = document.querySelector('.hamburger');
+            const sidebar = document.querySelector('.sidebar');
+            hamburger.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+
+            // Profile Dropdown
+            const profileDropdown = document.querySelector('.profile-dropdown');
+            profileDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function() {
+                profileDropdown.classList.remove('active');
+                sidebar.classList.remove('active');
+            });
+
+            // Display Rooms
+            function displayRooms() {
+                const roomsGrid = document.getElementById('rooms-grid');
+                roomsGrid.innerHTML = '';
+                rooms.forEach(room => {
+                    const roomCard = document.createElement('div');
+                    roomCard.className = 'room-card';
+                    roomCard.innerHTML = `
+                        <div class="room-header">
+                            <img src="${room.avatar}" alt="${room.name}" class="room-avatar">
+                            <span class="room-title">${room.name}</span>
+                        </div>
+                        <div class="room-description">${room.description}</div>
+                        <div class="room-actions">
+                            <button class="join-btn" onclick="window.open('${room.zoomLink}', '_blank')">Join Room</button>
+                        </div>
+                    `;
+                    roomsGrid.appendChild(roomCard);
+                    roomCard.style.animation = 'fadeInUp 0.5s ease';
+                });
+            }
+
+            // Create Room
+            document.getElementById('create-room-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const roomName = document.getElementById('room-name').value;
+                const zoomLink = document.getElementById('zoom-link').value;
+
+                // Basic validation for Zoom link
+                if (!zoomLink.startsWith('https://zoom.us/')) {
+                    showNotification('Please provide a valid Zoom link.', 'error');
+                    return;
+                }
+
+                rooms.push({
+                    name: roomName,
+                    description: `Join the ${roomName} hangout!`,
+                    zoomLink: zoomLink,
+                    avatar: "./static/default-room.jpg" // Placeholder for default room image
+                });
+
+                document.getElementById('create-room-form').reset();
+                displayRooms();
+                showNotification('Room created successfully!');
+            });
+
+            // Keyboard Navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    sidebar.classList.remove('active');
+                    profileDropdown.classList.remove('active');
+                }
+            });
+
+            // Accessibility
+            document.querySelectorAll('.join-btn, .icon-btn').forEach(btn => {
+                btn.setAttribute('tabindex', '0');
+                btn.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        this.click();
+                    }
+                });
+            });
+
+            // Initial display of rooms
+            displayRooms();
+        });
+    </script>
 </body>
 </html>
