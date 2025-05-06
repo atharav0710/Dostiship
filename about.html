@@ -357,12 +357,11 @@
         </div>
     </div>
     <script>
-        // Smooth Scroll for Navigation
         document.querySelectorAll('a[href^="./"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const href = this.getAttribute('href');
-                window.location.href = href; // For external links; adjust if smooth scroll within page is needed
+                window.location.href = href; 
             });
         });
 
