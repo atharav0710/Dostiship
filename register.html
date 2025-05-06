@@ -465,84 +465,38 @@
         </div>
     </div>
     <div class="notification" id="notification"></div>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const registerForm = document.getElementById('registerForm');
-            const notification = document.getElementById('notification');
-
-            // Show notification with message and type (success/error)
-            function showNotification(message, type = 'success') {
-                notification.textContent = message;
-                notification.className = `notification ${type}`;
-                notification.style.display = 'block';
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 3000);
+        document.getElementById("registerForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // Prevent default form submission
+    
+            // Optionally, you can add client-side validation here:
+            const password = this.password.value;
+            const confirmPassword = this.confirmPassword.value;
+    
+            if (password !== confirmPassword) {
+                showNotification("Passwords do not match!");
+                return;
             }
-
-            // Form submission handler
-            registerForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-
-                // Get form values
-                const firstName = this.querySelector('input[name="firstName"]').value.trim();
-                const lastName = this.querySelector('input[name="lastName"]').value.trim();
-                const username = this.querySelector('input[name="username"]').value.trim();
-                const email = this.querySelector('input[name="email"]').value.trim();
-                const gender = this.querySelector('select[name="gender"]').value;
-                const password = this.querySelector('input[name="password"]').value;
-                const confirmPassword = this.querySelector('input[name="confirmPassword"]').value;
-                const terms = this.querySelector('input[name="terms"]').checked;
-
-                // Validation
-                if (!firstName || !lastName || !username || !email || !gender || !password || !confirmPassword) {
-                    showNotification('Please fill out all required fields.', 'error');
-                    return;
-                }
-
-                if (!email.includes('@') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    showNotification('Please enter a valid email address.', 'error');
-                    return;
-                }
-
-                if (password !== confirmPassword) {
-                    showNotification('Passwords do not match.', 'error');
-                    return;
-                }
-
-                if (!terms) {
-                    showNotification('You must accept the Terms of Use and Privacy Policy.', 'error');
-                    return;
-                }
-
-                // Check username uniqueness using localStorage
-                let users = JSON.parse(localStorage.getItem('users') || '[]');
-                if (users.some(user => user.username === username)) {
-                    showNotification('Username already exists.', 'error');
-                    return;
-                }
-
-                // Simulate registration
-                const newUser = {
-                    firstName,
-                    lastName,
-                    username,
-                    email,
-                    gender,
-                    password // Note: In production, never store plain passwords
-                };
-                users.push(newUser);
-                localStorage.setItem('users', JSON.stringify(users));
-
-                // Show success and redirect
-                showNotification('Registration successful!', 'success');
-                setTimeout(() => {
-                    window.location.href = './page.html';
-                }, 2000);
-            });
+    
+            // Simulate successful registration
+            showNotification("Registration successful! Redirecting...");
+    
+            // Redirect to page.html after a short delay
+            setTimeout(() => {
+                window.location.href = "page.html";
+            }, 2000);
         });
-    </script>
+    
+        function showNotification(message) {
+            const notification = document.getElementById("notification");
+            notification.textContent = message;
+            notification.style.display = "block";
+    
+            setTimeout(() => {
+                notification.style.display = "none";
+            }, 3000);
+        }
+    </script>    
 </body>
 
 </html>
