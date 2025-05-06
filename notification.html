@@ -17,7 +17,7 @@
             --text-light: #777;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        
+
         * {
             margin: 0;
             padding: 0;
@@ -667,7 +667,7 @@
             </div>
         </div>
     </header>
-    
+
     <div class="main-content">
         <aside class="sidebar hidden">
             <div class="sidebar-section">
@@ -699,6 +699,7 @@
                         <option value="week">This Week</option>
                     </select>
                     <button class="notifications-btn" id="markAllRead">Mark all as read</button>
+                    <button class="notifications-btn" id="backBtn"><i class="fas fa-arrow-left"></i> Back</button>
                 </div>
             </div>
             
@@ -849,7 +850,7 @@
             </div>
         </main>
     </div>
-    
+
     <div class="confirmation-modal" id="confirmationModal">
         <div class="modal-content">
             <h3>Confirm Action</h3>
@@ -860,7 +861,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="notification-popup" id="notificationPopup"></div>
 
     <script>
@@ -875,7 +876,7 @@
             // Show Notification
             function showNotification(message, type = 'success', duration = 3000) {
                 notificationPopup.textContent = message;
-                notificationPopup.className = notification-popup `${type}`;
+                notificationPopup.className = `notification-popup ${type}`;
                 notificationPopup.style.display = 'block';
                 setTimeout(() => {
                     notificationPopup.style.display = 'none';
@@ -940,7 +941,7 @@
                     this.classList.add('active');
                     const tab = this.getAttribute('data-tab');
                     filterNotifications(tab);
-                    showNotification(Showing `${tab} notifications`);
+                    showNotification(`Showing ${tab} notifications`);
                 });
             });
 
@@ -964,7 +965,7 @@
                     if (show) visibleCount++;
                 });
                 emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-                showNotification(Filtered ,by `${value}`);
+                showNotification(`Filtered by ${value}`);
             });
 
             // Mark as Read
@@ -1020,6 +1021,12 @@
             cancelDecline.addEventListener('click', function() {
                 confirmationModal.style.display = 'none';
                 activeDeclineButton = null;
+            });
+
+            // Back Button
+            const backBtn = document.getElementById('backBtn');
+            backBtn.addEventListener('click', function() {
+                window.history.back();
             });
 
             // Load More (Simulated)
