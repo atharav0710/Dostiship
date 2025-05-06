@@ -466,10 +466,11 @@
     </div>
     <div class="notification" id="notification"></div>
     <script>
-        document.getElementById("registerForm").addEventListener("submit", function (e) {
-            e.preventDefault(); // Prevent default form submission
+        // Registration
+        document.getElementById("registerForm")?.addEventListener("submit", function (e) {
+            e.preventDefault();
     
-            // Optionally, you can add client-side validation here:
+            const username = this.username.value.trim();
             const password = this.password.value;
             const confirmPassword = this.confirmPassword.value;
     
@@ -478,15 +479,38 @@
                 return;
             }
     
-            // Simulate successful registration
+            // Store credentials in localStorage
+            localStorage.setItem("registeredUsername", username);
+            localStorage.setItem("registeredPassword", password);
+    
             showNotification("Registration successful! Redirecting...");
     
-            // Redirect to page.html after a short delay
             setTimeout(() => {
-                window.location.href = "page.html";
+                window.location.href = "page.html"; // redirect to login or home
             }, 2000);
         });
     
+        // Login
+        document.getElementById("loginForm")?.addEventListener("submit", function (e) {
+            e.preventDefault();
+    
+            const username = this.username.value.trim();
+            const password = this.password.value;
+    
+            const storedUsername = localStorage.getItem("registeredUsername");
+            const storedPassword = localStorage.getItem("registeredPassword");
+    
+            if (username === storedUsername && password === storedPassword) {
+                showNotification("Login successful! Redirecting...");
+                setTimeout(() => {
+                    window.location.href = "dashboard.html"; // Change to your logged-in page
+                }, 2000);
+            } else {
+                showNotification("Invalid username or password!");
+            }
+        });
+    
+        // Notification function
         function showNotification(message) {
             const notification = document.getElementById("notification");
             notification.textContent = message;
@@ -496,7 +520,7 @@
                 notification.style.display = "none";
             }, 3000);
         }
-    </script>    
+    </script>        
 </body>
 
 </html>
