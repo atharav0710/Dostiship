@@ -842,238 +842,311 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Mock user data
-            const users = [
-                { id: '1', name: 'Amanatpreet Kaur', avatar: './static/profileimg.jpg', status: 'Online' },
-                { id: '2', name: 'Akhil Azad', avatar: './static/profileimg.jpg', status: 'Offline' },
-                { id: '3', name: 'Arshiya Verma', avatar: './static/profileimg.jpg', status: 'Away' }
+       document.addEventListener('DOMContentLoaded', function () {
+    // User data with unique IDs
+    const users = [
+        { id: 'user1', name: 'Amanatpreet Kaur', avatar: './static/profileimg.jpg', status: 'Online' },
+        { id: 'user2', name: 'Akhil Azad', avatar: './static/profileimg.jpg', status: 'Offline' },
+        { id: 'user3', name: 'Arshiya Verma', avatar: './static/profileimg.jpg', status: 'Away' }
+    ];
+
+    // Initialize chats from localStorage or default
+    let chats = JSON.parse(localStorage.getItem('chats')) || {
+        'user1': [
+            { id: 'msg1', text: 'Hey there! How are you doing?', type: 'received', timestamp: '10:30 AM' },
+            { id: 'msg2', text: "I'm doing great! Just finished my project.", type: 'sent', timestamp: '10:32 AM' },
+            { id: 'msg3', text: '<div class="voice-message" data-duration="0:15"><i class="fas fa-microphone"></i><div class="voice-progress"><div class="voice-progress-bar"></div></div><div class="voice-duration">0:15</div></div>', type: 'received', timestamp: '10:33 AM' },
+            { id: 'msg4', text: '<div class="media-message"><div class="media-item"><img src="./static/profileimg.jpg" alt="Photo"></div><div class="media-item"><img src="./static/profileimg.jpg" alt="Photo"></div></div>', type: 'sent', timestamp: '10:35 AM' }
+        ],
+        'user2': [],
+        'user3': []
+    };
+
+    let currentUserId = 'user1'; // Default to first user
+
+    // DOM Elements
+    const chatItems = document.querySelectorAll('.chat-item');
+    const chatMessages = document.querySelector('.chat-messages');
+    const chatHeaderName = document.querySelector('.chat-header-name');
+    const chatHeaderStatus = document.querySelector('.chat-header-status');
+    const chatHeaderAvatar = document.querySelector('.chat-header .chat-avatar');
+    const messageInput = document.querySelector('.message-input');
+    const sendBtn = document.querySelector('.send-btn');
+    const chatSearch = document.querySelector('.chat-search input');
+    const profileBtn = document.querySelector('.profile-btn');
+    const profileDropdown = document.querySelector('.profile-dropdown');
+    const headerIcons = document.querySelectorAll('.icon-btn');
+
+    // Helper: Generate unique message ID
+    function generateMessageId() {
+        return 'msg' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // Helper: Save chats to localStorage
+    function saveChats() {
+        localStorage.setItem('chats', JSON.stringify(chats));
+    }
+
+    // Helper: Format timestamp
+    function getTimestamp() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Helper: Scroll chat to bottom
+    function scrollChatToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Render Messages
+    function renderMessages(userId) {
+        chatMessages.innerHTML = '';
+        const messages = chats[userId] || [];
+        messages.forEach(msg => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${msg.type}`;
+            messageDiv.dataset.messageId = msg.id;
+            messageDiv.innerHTML = `
+                ${msg.type === 'received' ? `<img src="./static/profileimg.jpg" alt="User" class="message-avatar">` : ''}
+                <div class="message-content">
+                    ${msg.text}
+                    <div class="message-time">${msg.timestamp}</div>
+                    <div class="message-actions">
+                        <button class="message-action reply-btn" title="Reply"><i class="fas fa-reply"></i></button>
+                        <button class="message-action delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+        });
+        scrollChatToBottom();
+        attachMessageEventListeners();
+    }
+
+    // Update Chat Header
+    function updateChatHeader(userId) {
+        const user = users.find(u => u.id === userId);
+        chatHeaderName.textContent = user.name;
+        chatHeaderStatus.textContent = user.status;
+        chatHeaderAvatar.src = user.avatar;
+    }
+
+    // Send Message
+    function sendMessage(text = messageInput.value.trim()) {
+        if (!text) return;
+
+        const message = {
+            id: generateMessageId(),
+            text,
+            type: 'sent',
+            timestamp: getTimestamp()
+        };
+
+        chats[currentUserId] = chats[currentUserId] || [];
+        chats[currentUserId].push(message);
+        saveChats();
+        renderMessages(currentUserId);
+        messageInput.value = '';
+
+        // Simulate received message after 2 seconds
+        setTimeout(() => {
+            const responses = [
+                'That sounds awesome! 😊',
+                'Cool, tell me more!',
+                'Haha, nice one!',
+                'Looks great, keep it up!'
             ];
-
-            // Initialize chat messages from localStorage or default
-            let chats = JSON.parse(localStorage.getItem('chats')) || {
-                '1': [
-                    { text: 'Hey there! How are you doing?', type: 'received', timestamp: '10:30 AM' },
-                    { text: "I'm doing great! Just finished my project.", type: 'sent', timestamp: '10:32 AM' },
-                    { text: '<div class="voice-message"><i class="fas fa-microphone"></i><div class="voice-progress"><div class="voice-progress-bar"></div></div><div class="voice-duration">0:15</div></div>', type: 'received', timestamp: '10:33 AM' },
-                    { text: '<div class="media-message"><div class="media-item"><img src="./static/profileimg.jpg" alt="Photo"></div><div class="media-item"><img src="./static/profileimg.jpg" alt="Photo"></div></div>', type: 'sent', timestamp: '10:35 AM' }
-                ],
-                '2': [],
-                '3': []
-            };
-
-            let currentUserId = '1'; // Default to first user
-
-            // DOM Elements
-            const chatItems = document.querySelectorAll('.chat-item');
-            const chatMessages = document.querySelector('.chat-messages');
-            const chatHeaderName = document.querySelector('.chat-header-name');
-            const chatHeaderStatus = document.querySelector('.chat-header-status');
-            const chatHeaderAvatar = document.querySelector('.chat-header .chat-avatar');
-            const messageInput = document.querySelector('.message-input');
-            const sendBtn = document.querySelector('.send-btn');
-            const chatSearch = document.querySelector('.chat-search input');
-            const profileBtn = document.querySelector('.profile-btn');
-            const profileDropdown = document.querySelector('.profile-dropdown');
-            const sidebarMenuLinks = document.querySelectorAll('.sidebar-menu a');
-            const headerIcons = document.querySelectorAll('.icon-btn');
-
-            // Helper: Save chats to localStorage
-            function saveChats() {
-                localStorage.setItem('chats', JSON.stringify(chats));
-            }
-
-            // Helper: Format timestamp
-            function getTimestamp() {
-                const now = new Date();
-                return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            }
-
-            // Helper: Scroll chat to bottom
-            function scrollChatToBottom() {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-
-            // Render Messages
-            function renderMessages(userId) {
-                chatMessages.innerHTML = '';
-                const messages = chats[userId] || [];
-                messages.forEach(msg => {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = `message ${msg.type}`;
-                    messageDiv.innerHTML = `
-                        ${msg.type === 'received' ? `<img src="./static/profileimg.jpg" alt="User" class="message-avatar">` : ''}
-                        <div class="message-content">
-                            ${msg.text}
-                            <div class="message-time">${msg.timestamp}</div>
-                            <div class="message-actions">
-                                <button class="message-action"><i class="fas fa-reply"></i></button>
-                                <button class="message-action"><i class="fas fa-ellipsis-h"></i></button>
-                            </div>
-                        </div>
-                    `;
-                    chatMessages.appendChild(messageDiv);
-                });
-                scrollChatToBottom();
-            }
-
-            // Update Chat Header
-            function updateChatHeader(userId) {
-                const user = users.find(u => u.id === userId);
-                chatHeaderName.textContent = user.name;
-                chatHeaderStatus.textContent = user.status;
-                chatHeaderAvatar.src = user.avatar;
-            }
-
-            // Send Message
-            function sendMessage() {
-                const text = messageInput.value.trim();
-                if (!text) return;
-
-                const message = {
-                    text,
-                    type: 'sent',
-                    timestamp: getTimestamp()
-                };
-
-                chats[currentUserId] = chats[currentUserId] || [];
-                chats[currentUserId].push(message);
-                saveChats();
-                renderMessages(currentUserId);
-                messageInput.value = '';
-
-                // Simulate received message after 2 seconds
-                setTimeout(() => {
-                    const responses = [
-                        'That sounds awesome! 😊',
-                        'Cool, tell me more!',
-                        'Haha, nice one!'
-                    ];
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    chats[currentUserId].push({
-                        text: randomResponse,
-                        type: 'received',
-                        timestamp: getTimestamp()
-                    });
-                    saveChats();
-                    renderMessages(currentUserId);
-                }, 2000);
-            }
-
-            // Chat Item Selection
-            chatItems.forEach(item => {
-                item.addEventListener('click', function () {
-                    chatItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    currentUserId = this.dataset.userId;
-                    updateChatHeader(currentUserId);
-                    renderMessages(currentUserId);
-                });
-                item.setAttribute('tabindex', '0');
-                item.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        this.click();
-                    }
-                });
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            chats[currentUserId].push({
+                id: generateMessageId(),
+                text: randomResponse,
+                type: 'received',
+                timestamp: getTimestamp()
             });
-
-            // Send Message on Button Click
-            sendBtn.addEventListener('click', sendMessage);
-
-            // Send Message on Enter Key
-            messageInput.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-
-            // Search Chats
-            chatSearch.addEventListener('input', function () {
-                const query = this.value.toLowerCase();
-                chatItems.forEach(item => {
-                    const name = item.querySelector('.chat-name').textContent.toLowerCase();
-                    item.style.display = name.includes(query) ? 'flex' : 'none';
-                });
-            });
-
-            // Profile Dropdown Toggle
-            profileBtn.addEventListener('click', function () {
-                profileDropdown.classList.toggle('active');
-            });
-
-            // Close Dropdown on Outside Click
-            document.addEventListener('click', function (e) {
-                if (!profileDropdown.contains(e.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
-
-            // Dropdown Navigation
-            document.querySelectorAll('.dropdown-menu a').forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const href = this.getAttribute('href');
-                    window.location.href = href;
-                });
-                link.setAttribute('tabindex', '0');
-                link.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        this.click();
-                    }
-                });
-            });
-
-            // Sidebar Navigation
-            sidebarMenuLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    sidebarMenuLinks.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
-                    const page = this.dataset.page;
-                    window.location.href = page;
-                });
-                link.setAttribute('tabindex', '0');
-                link.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        this.click();
-                    }
-                });
-            });
-
-            // Header Icons
-            headerIcons.forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const action = this.dataset.action;
-                    if (action === 'search') {
-                        alert('Search feature coming soon!');
-                    } else if (action === 'messages') {
-                        window.location.href = './inbox.html';
-                    }
-                });
-                btn.setAttribute('tabindex', '0');
-                btn.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        this.click();
-                    }
-                });
-            });
-
-            // Initialize Chat
+            saveChats();
             renderMessages(currentUserId);
-            updateChatHeader(currentUserId);
+        }, 2000);
+    }
 
-            // Mock Online Friends (Placeholder)
-            const onlineFriendsSection = document.querySelector('.sidebar-section:last-child');
-            const onlineFriends = ['Amanatpreet Kaur', 'Akhil Azad'];
-            onlineFriends.forEach(friend => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <a href="#" class="sidebar-menu"><i class="fas fa-user-circle"></i> ${friend}</a>
-                `;
-                onlineFriendsSection.appendChild(li);
+    // Attach Message Event Listeners
+    function attachMessageEventListeners() {
+        // Voice Message Playback
+        document.querySelectorAll('.voice-message').forEach(vm => {
+            vm.addEventListener('click', function () {
+                const duration = this.dataset.duration;
+                alert(`Simulating playback of voice message (${duration})`);
             });
         });
+
+        // Media Item Click
+        document.querySelectorAll('.media-item img').forEach(img => {
+            img.addEventListener('click', function () {
+                alert('Opening media in lightbox (simulated)');
+            });
+        });
+
+        // Message Actions
+        document.querySelectorAll('.reply-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const messageDiv = this.closest('.message');
+                const messageId = messageDiv.dataset.messageId;
+                const message = chats[currentUserId].find(m => m.id === messageId);
+                const replyText = `Replying to: ${message.text.substring(0, 20)}... `;
+                messageInput.value = replyText;
+                messageInput.focus();
+            });
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const messageDiv = this.closest('.message');
+                const messageId = messageDiv.dataset.messageId;
+                chats[currentUserId] = chats[currentUserId].filter(m => m.id !== messageId);
+                saveChats();
+                renderMessages(currentUserId);
+                alert('Message deleted');
+            });
+        });
+    }
+
+    // Simulate Online Status Updates
+    function updateOnlineStatus() {
+        users.forEach(user => {
+            const statuses = ['Online', 'Offline', 'Away'];
+            user.status = statuses[Math.floor(Math.random() * statuses.length)];
+        });
+        if (users.find(u => u.id === currentUserId)) {
+            updateChatHeader(currentUserId);
+        }
+        chatItems.forEach(item => {
+            const userId = item.dataset.userId;
+            const user = users.find(u => u.id === userId);
+            const timeEl = item.querySelector('.chat-time');
+            timeEl.textContent = user.status;
+        });
+    }
+
+    // Chat Item Selection
+    chatItems.forEach((item, index) => {
+        item.dataset.userId = users[index].id; // Assign user IDs
+        item.addEventListener('click', function () {
+            chatItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            currentUserId = this.dataset.userId;
+            updateChatHeader(currentUserId);
+            renderMessages(currentUserId);
+        });
+        item.setAttribute('tabindex', '0');
+        item.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+
+    // Send Message on Button Click
+    sendBtn.addEventListener('click', sendMessage);
+
+    // Send Message on Enter Key
+    messageInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    // Search Chats
+    chatSearch.addEventListener('input', function () {
+        const query = this.value.toLowerCase().trim();
+        chatItems.forEach(item => {
+            const name = item.querySelector('.chat-name').textContent.toLowerCase();
+            item.style.display = query === '' || name.includes(query) ? 'flex' : 'none';
+        });
+    });
+
+    // Profile Dropdown Toggle
+    profileBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('active');
+    });
+
+    // Close Dropdown on Outside Click
+    document.addEventListener('click', function (e) {
+        if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)) {
+            profileDropdown.classList.remove('active');
+        }
+    });
+
+    // Dropdown Navigation
+    document.querySelectorAll('.dropdown-menu a').forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            window.location.href = href;
+        });
+        link.setAttribute('tabindex', '0');
+        link.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+
+    // Header Icons
+    headerIcons.forEach(btn => {
+        btn.dataset.action = btn.querySelector('i').classList.contains('fa-search') ? 'search' : 'messages';
+        btn.addEventListener('click', function () {
+            const action = this.dataset.action;
+            if (action === 'search') {
+                chatSearch.focus();
+                alert('Search activated. Type in the search bar.');
+            } else if (action === 'messages') {
+                window.location.href = './inbox.html';
+            }
+        });
+        btn.setAttribute('tabindex', '0');
+        btn.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+
+    // Input Tools
+    document.querySelectorAll('.input-tool').forEach(tool => {
+        tool.addEventListener('click', function () {
+            const icon = this.querySelector('i').className;
+            if (icon.includes('fa-paperclip')) {
+                alert('File attachment feature coming soon!');
+            } else if (icon.includes('fa-image')) {
+                alert('Photo upload feature coming soon!');
+            } else if (icon.includes('fa-microphone')) {
+                alert('Recording voice message (simulated)');
+                const voiceMessage = `<div class="voice-message" data-duration="0:10"><i class="fas fa-microphone"></i><div class="voice-progress"><div class="voice-progress-bar"></div></div><div class="voice-duration">0:10</div></div>`;
+                sendMessage(voiceMessage);
+            }
+        });
+    });
+
+    // Initialize Chat
+    renderMessages(currentUserId);
+    updateChatHeader(currentUserId);
+
+    // Simulate status updates every 30 seconds
+    setInterval(updateOnlineStatus, 30000);
+
+    // Keyboard Navigation for Accessibility
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            profileDropdown.classList.remove('active');
+            chatSearch.value = '';
+            chatItems.forEach(item => item.style.display = 'flex');
+        }
+    });
+});
     </script>
 </body>
 </html>
