@@ -369,42 +369,38 @@
     <div class="notification" id="notification"></div>
 
     <script>
-        // Dummy registered credentials (for demo only)
-        const registeredUsername = "testuser";
-        const registeredPassword = "test123";
-    
-        const loginForm = document.getElementById("loginForm");
-        const notification = document.getElementById("notification");
-    
-        loginForm.addEventListener("submit", function (e) {
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
             e.preventDefault();
     
-            const username = document.getElementById("username").value;
+            const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value;
     
-            if (username === registeredUsername && password === registeredPassword) {
-                // Redirect to page.html
-                window.location.href = "page.html";
-            } else {
-                // Show notification
-                notification.textContent = "Invalid username or password.";
-                notification.style.display = "block";
+            const storedUsername = localStorage.getItem("registeredUsername");
+            const storedPassword = localStorage.getItem("registeredPassword");
+    
+            if (username === storedUsername && password === storedPassword) {
+                showNotification("Login successful! Redirecting...", "green");
+    
                 setTimeout(() => {
-                    notification.style.display = "none";
-                }, 3000);
+                    window.location.href = "dashboard.html"; // Change to your actual destination
+                }, 2000);
+            } else {
+                showNotification("Invalid username or password!", "red");
             }
         });
     
-        // Toggle password visibility
-        const togglePassword = document.querySelector(".toggle-password");
-        const passwordInput = document.getElementById("password");
+        function showNotification(message, color = "red") {
+            const notification = document.getElementById("notification");
+            notification.textContent = message;
+            notification.style.display = "block";
+            notification.style.color = color;
+            notification.style.marginTop = "10px";
     
-        togglePassword.addEventListener("click", () => {
-            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-            passwordInput.setAttribute("type", type);
-            togglePassword.classList.toggle("fa-eye");
-            togglePassword.classList.toggle("fa-eye-slash");
-        });
-    </script>    
+            setTimeout(() => {
+                notification.style.display = "none";
+            }, 3000);
+        }
+    </script>
+        
 </body>
 </html>
